@@ -2,6 +2,7 @@
 	import { Button } from '$lib/components/ui/button/index.js'
 	import * as Card from '$lib/components/ui/card/index.js'
 	import { Input } from '$lib/components/ui/input/index.js'
+	import Checkbox from '$lib/components/ui/checkbox/checkbox.svelte'
 	import { tasks } from './tasks'
 	import { onMount } from 'svelte'
 
@@ -37,10 +38,9 @@
 						{#if !todo.done}
 							<span class="flex h-2 w-2 translate-y-1 rounded-full bg-red-500" />
 						{/if}
-						<div class="space-y-1">
-							<p class="text-sm font-medium leading-none">
-								{todo.description}
-							</p>
+						<div class="d-flex w-full flex-row space-y-1 border">
+							<span>{todo.description}</span>
+							<input type="checkbox" checked={todo.done}>
 						</div>
 					</div>
 				{/each}
