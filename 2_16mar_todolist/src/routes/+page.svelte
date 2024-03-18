@@ -1,8 +1,10 @@
 <script lang="ts">
-	import * as Card from '$lib/components/ui/card';
-	import AddTodo from '../components/AddTodo.svelte';
+	
+	import * as Card from '$lib/components/ui/card'
+	import AddTodo from '../components/AddTodo.svelte'
+	import List from '../components/List.svelte'
 
-	export let form;
+	export let data
 </script>
 
 <main>
@@ -14,12 +16,9 @@
 			</Card.Header>
 			<Card.Content>
 				<AddTodo></AddTodo>
-				{#if form?.success}
-					<p class="hidden">{console.log(form?.lmao)}</p>
-				{/if}
 			</Card.Content>
-			<Card.Footer>
-				<p>Card Footer</p>
+			<Card.Footer class="flex flex-col items-start">
+				<List {data}></List>
 			</Card.Footer>
 		</Card.Root>
 	</div>

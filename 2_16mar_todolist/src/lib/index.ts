@@ -7,4 +7,5 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const queryClient = postgres(`postgres://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`);
-export const db = drizzle(queryClient, { schema });
+
+export const db = drizzle(queryClient, { schema, logger: true });

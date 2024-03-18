@@ -1,7 +1,7 @@
-import { pgTable, varchar, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, boolean, uuid } from 'drizzle-orm/pg-core';
 
 export const tasks = pgTable('tasks', {
-    userID: varchar('userID').notNull(),
-    descrption: varchar('description').notNull(),
+    userID: uuid('userID').notNull(),
+    description: varchar('description').notNull(),
     checked: boolean('checked').default(false)
 })
