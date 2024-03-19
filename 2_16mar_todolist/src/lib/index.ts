@@ -1,8 +1,9 @@
 // place files you want to import through the `$lib` alias in this folder.
 
-import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import * as schema from '$lib/schema'
+
 import dotenv from 'dotenv'
 dotenv.config()
 

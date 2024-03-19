@@ -22,32 +22,23 @@
 </script>
 
 <div class="w-full">
-	{#each data.allTasks as item}
-		{#if item.checked}
-			<div class="m-2 flex items-center space-x-2 line-through">
-				<Checkbox
-					bind:checked={item.checked}
-					onCheckedChange={() => {
-						que(item)
-					}}
-					id="checked"
-				></Checkbox>
-				<Label for="checked"><p>{item.description}</p></Label>
-			</div>
-		{:else}
-			<div class="m-2 flex items-center space-x-2">
-				<Checkbox
-					bind:checked={item.checked}
-					onCheckedChange={() => {
-						que(item)
-					}}
-					id="checked"
-				></Checkbox>
-				<Label for="checked"><p>{item.description}</p></Label>
-			</div>
-		{/if}
-	{/each}
-	<div class="flex w-full justify-end">
-		<Button>Borrar seleccionadas</Button>
-	</div>
+    {#if data.status !== 404}
+        {#each data.allTasks as item (item.taskID)}
+            <div class="m-2 flex items-center space-x-2">
+                <Checkbox
+                    bind:checked={item.checked}
+                    onCheckedChange={() => {
+                        que(item)
+                    }}
+                    id="{item.taskID}"
+                />
+                <Label for="{item.taskID}">
+                    <p>{item.description}</p>
+                </Label>
+            </div>
+        {/each}
+        <div class="flex w-full justify-end">
+            <Button>Borrar seleccionadas</Button>
+        </div>
+    {/if}
 </div>

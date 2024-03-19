@@ -1,13 +1,19 @@
 <script lang="ts">
-	
 	import * as Card from '$lib/components/ui/card'
 	import AddTodo from '../components/AddTodo.svelte'
 	import List from '../components/List.svelte'
+	import { enhance } from '$app/forms'
+	import { Button } from '$lib/components/ui/button'
 
 	export let data
 </script>
 
 <main>
+	<div class="block absolute top-10 right-10">
+		<form method="post" action="?/signOut" use:enhance>
+			<Button>Cerrar sesión</Button>
+		</form>
+	</div>
 	<div class="w-1/2">
 		<Card.Root>
 			<Card.Header>
@@ -18,7 +24,11 @@
 				<AddTodo></AddTodo>
 			</Card.Content>
 			<Card.Footer class="flex flex-col items-start">
-				<List {data}></List>
+				{#if data !== undefined}
+					<List {data}></List>
+				{:else}
+					<p>vacío</p>
+				{/if}
 			</Card.Footer>
 		</Card.Root>
 	</div>

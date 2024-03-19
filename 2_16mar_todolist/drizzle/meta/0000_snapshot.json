@@ -1,5 +1,5 @@
 {
-  "id": "e5f7051a-404a-47e6-9a8d-2e7bf002cbe6",
+  "id": "c332ff76-147a-433e-af40-3a037dc29338",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
@@ -8,6 +8,12 @@
       "name": "tasks",
       "schema": "",
       "columns": {
+        "taskID": {
+          "name": "taskID",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "userID": {
           "name": "userID",
           "type": "uuid",

@@ -2,9 +2,13 @@
 
 import { db } from '$lib'
 import { tasks } from '$lib/schema.js'
-import { and, eq, like } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
-export async function load({ cookies }) {
+import type { PageServerLoad, Actions } from './$types'
+import { fail, redirect } from '@sveltejs/kit';
+import { lucia } from '$lib/server/auth';
+
+export const load: PageServerLoad = async ({ cookies }) => {
     let id = cookies.get('userid');
 
     if (!id) {
@@ -21,13 +25,13 @@ export async function load({ cookies }) {
     } catch (error) {
         console.error('Error fetching data:', error);
         return {
-            status: 500,
-            error: 'Internal Server Error',
+            status: 404,
+            error: 'Data not found',
         };
     }
 }
 
-export const actions = {
+export const actions: Actions = {
     send: async ({ request, cookies }) => {
         const data = await request.formData()
 
@@ -58,7 +62,19 @@ export const actions = {
                 eq(tasks.description, task.description)
             )
         )
-    }
+    },
+    signOut: async (event) => {
+		if (!event.locals.session) {
+			return fail(401);
+		}
+		await lucia.invalidateSession(event.locals.session.id);
+		const sessionCookie = lucia.createBlankSessionCookie();
+		event.cookies.set(sessionCookie.name, sessionCookie.value, {
+			path: ".",
+			...sessionCookie.attributes
+		});
+		redirect(302, "/");
+	}
     /* delete: async ({ cookies, request }) => {
         const data = await request.formData()
         db.deleteTodo(cookies.get('userid'), data.get('task'))
