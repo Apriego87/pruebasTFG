@@ -1,4 +1,4 @@
-import { lucia } from "$lib/server/auth";
+import { auth } from "$lib/server/auth";
 import { fail, redirect } from "@sveltejs/kit";
 import { generateId } from "lucia";
 import { Argon2id } from "oslo/password";
@@ -10,8 +10,11 @@ import { userTable } from "$lib/schema";
 export const actions: Actions = {
     default: async (event) => {
         const formData = await event.request.formData();
+
+        const name = formData.get("name")
         const username = formData.get("username");
         const password = formData.get("password");
+
         // username must be between 4 ~ 31 characters, and only consists of lowercase letters, 0-9, -, and _
         // keep in mind some database (e.g. mysql) are case insensitive
         if (
@@ -33,19 +36,34 @@ export const actions: Actions = {
         const userId = generateId(15);
         const hashedPassword = await new Argon2id().hash(password);
 
+        // TODO: check if username is already used
+        /* await db.table("user").insert({
+            id: userId,
+            username: username,
+            hashed_password: hashedPassword
+        }); */
+
+        /* await db.insert(userTable).values({
+            id: userId,
+            name: name,
+            username: username,
+            hashed_password: hashedPassword
+        }) */
+
         await db.insert(userTable).values({
             id: userId,
+            name: name,
             username: username,
             hashed_password: hashedPassword
         })
 
-        const session = await lucia.createSession(userId, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
+        /* const session = await auth.createSession(userId, {});
+        const sessionCookie = auth.createSessionCookie(session.id);
         event.cookies.set(sessionCookie.name, sessionCookie.value, {
             path: ".",
             ...sessionCookie.attributes
-        });
+        }); */
 
         redirect(302, "/");
     }
-}
+};

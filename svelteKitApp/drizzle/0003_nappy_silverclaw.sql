@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ALTER COLUMN "userID" SET DATA TYPE varchar;
