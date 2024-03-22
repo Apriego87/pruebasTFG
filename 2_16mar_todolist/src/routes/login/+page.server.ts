@@ -62,9 +62,11 @@ export const actions: Actions = {
 		const sessionCookie = auth.createSessionCookie(session.id);
 
 		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: ".",
+			path: "/",
+			secure: true,
+			httpOnly: true,
 			...sessionCookie.attributes
-		});
+		})
 
 		event.cookies.set('userid', existingUser[0].id, {
 			secure: false,

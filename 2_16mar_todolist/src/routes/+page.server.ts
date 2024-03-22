@@ -18,7 +18,8 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
 
     try {
-        const allTasks = await db.select().from(tasks)
+        const userID = cookies.get('userid')
+        const allTasks = await db.select().from(tasks).where(eq(tasks.userID, userID))
 
         return {
             allTasks, logged
@@ -88,13 +89,14 @@ export const actions: Actions = {
         await auth.invalidateSession(event.locals.session.id);
         const sessionCookie = auth.createBlankSessionCookie();
         event.cookies.set(sessionCookie.name, sessionCookie.value, {
-            path: ".",
-            ...sessionCookie.attributes
+            path: "/",
+            secure: false
         });
 
         event.cookies.set('userid', '', {
             expires: new Date(0),
             path: '/',
+            secure: false
         });
 
         redirect(302, "/");
