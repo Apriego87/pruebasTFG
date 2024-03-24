@@ -6,7 +6,7 @@
 	import { Button } from '$lib/components/ui/button'
 	
 
-	export let data
+	export let data: PageData
 </script>
 
 <main>

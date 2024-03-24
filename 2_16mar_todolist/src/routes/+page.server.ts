@@ -78,7 +78,7 @@ export const actions: Actions = {
             )
         )
     },
-    deleteChecked: async({ cookies }) => {
+    deleteChecked: async ({ cookies }) => {
         const userID = cookies.get('userid')
         await db.delete(tasks).where(and(eq(tasks.checked, true), eq(tasks.userID, userID)))
     },
@@ -89,6 +89,7 @@ export const actions: Actions = {
         await auth.invalidateSession(event.locals.session.id);
         const sessionCookie = auth.createBlankSessionCookie();
         event.cookies.set(sessionCookie.name, sessionCookie.value, {
+            expires: new Date(0),
             path: "/",
             secure: false
         });
@@ -99,6 +100,6 @@ export const actions: Actions = {
             secure: false
         });
 
-        redirect(302, "/");
+        return redirect(302, "/");
     }
 }

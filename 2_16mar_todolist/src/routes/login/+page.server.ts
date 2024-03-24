@@ -7,72 +7,70 @@ import type { Actions } from "./$types";
 import { userTable } from "$lib/schema";
 import { eq } from "drizzle-orm";
 
+import { superValidate } from 'sveltekit-superforms';
+import { zod } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
+
+// Define outside the load function so the adapter can be cached
+
+const schema = z.object({
+	username: z.string().min(4).max(31).regex(new RegExp(/^[a-z0-9_]+$/), {
+		message: 'Username must only contain lowercase letters, digits, hyphens, and underscores',
+	}),
+	password: z.string().min(8).max(50)
+});
+
+export const load = (async () => {
+	const form = await superValidate(zod(schema));
+
+	// Always return { form } in load functions
+	return { form };
+});
+
 export const actions: Actions = {
-	default: async (event) => {
-		const formData = await event.request.formData();
-		const username = formData.get("username");
-		const password = formData.get("password");
+	default: async ({ request, cookies }) => {
 
-		if (
-			typeof username !== "string" ||
-			username.length < 3 ||
-			username.length > 31 ||
-			!/^[a-z0-9_-]+$/.test(username)
-		) {
-			return fail(400, {
-				message: "Invalid username"
-			});
+		const form = await superValidate(request, zod(schema));
+
+		if (!form.valid) {
+			return fail(400, { form });
 		}
-		if (typeof password !== "string" || password.length < 6 || password.length > 255) {
-			return fail(400, {
-				message: "Invalid password"
-			});
-		}
+		else {
+			const username = (form.data.username as string) || '';
+			const password = (form.data.password as string) || '';
 
-		/* const existingUser = await db
-			.table("username")
-			.where("username", "=", username.toLowerCase())
-			.get(); */
+			const existingUser = await db.select().from(userTable).where(eq(userTable.username, username.toLowerCase()))
 
-		const existingUser = await db.select().from(userTable).where(eq(userTable.username, username.toLowerCase()))
+			if (!existingUser) {
+				return fail(400, {
+					message: "Incorrect username or password"
+				});
+			}
 
-		if (!existingUser) {
-			// NOTE:
-			// Returning immediately allows malicious actors to figure out valid usernames from response times,
-			// allowing them to only focus on guessing passwords in brute-force attacks.
-			// As a preventive measure, you may want to hash passwords even for invalid usernames.
-			// However, valid usernames can be already be revealed with the signup page among other methods.
-			// It will also be much more resource intensive.
-			// Since protecting against this is none-trivial,
-			// it is crucial your implementation is protected against brute-force attacks with login throttling etc.
-			// If usernames are public, you may outright tell the user that the username is invalid.
-			return fail(400, {
-				message: "Incorrect username or password"
-			});
-		}
+			const validPassword = await new Argon2id().verify(existingUser[0].hashed_password, password);
+			if (!validPassword) {
+				return fail(400, {
+					message: "Incorrect username or password"
+				});
+			}
 
-		const validPassword = await new Argon2id().verify(existingUser[0].hashed_password, password);
-		if (!validPassword) {
-			return fail(400, {
-				message: "Incorrect username or password"
-			});
+			const session = await auth.createSession(existingUser[0].id, {});
+			const sessionCookie = auth.createSessionCookie(session.id);
+
+			cookies.set(sessionCookie.name, sessionCookie.value, {
+				path: "/",
+				secure: true,
+				httpOnly: true,
+				...sessionCookie.attributes
+			})
+
+			cookies.set('userid', existingUser[0].id, {
+				secure: false,
+				path: '/'
+			})
+
+			return redirect(302, "/");
 		}
 
-		const session = await auth.createSession(existingUser[0].id, {});
-		const sessionCookie = auth.createSessionCookie(session.id);
-
-		event.cookies.set(sessionCookie.name, sessionCookie.value, {
-			path: "/",
-			secure: true,
-			httpOnly: true,
-			...sessionCookie.attributes
-		})
-
-		event.cookies.set('userid', existingUser[0].id, {
-			secure: false,
-			path: '/'
-		})
-
-		redirect(302, "/");
 	}
 };
