@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1711452984298,
+      "tag": "0000_military_jimmy_woo",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1711455436608,
+      "tag": "0001_aberrant_guardsmen",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1711455758535,
+      "tag": "0002_neat_hellcat",
+      "breakpoints": true
+    }
+  ]
+}

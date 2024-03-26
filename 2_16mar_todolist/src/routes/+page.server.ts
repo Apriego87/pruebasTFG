@@ -18,7 +18,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
 
     try {
-        const userID = cookies.get('userid')
+        const userID = cookies.get('userid') || ''
         const allTasks = await db.select().from(tasks).where(eq(tasks.userID, userID))
 
         return {
@@ -79,7 +79,7 @@ export const actions: Actions = {
         )
     },
     deleteChecked: async ({ cookies }) => {
-        const userID = cookies.get('userid')
+        const userID = cookies.get('userid') || ''
         await db.delete(tasks).where(and(eq(tasks.checked, true), eq(tasks.userID, userID)))
     },
     signout: async (event) => {
