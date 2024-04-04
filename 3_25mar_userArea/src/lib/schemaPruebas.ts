@@ -1,19 +1,9 @@
-import { serial, varchar, timestamp, pgTable, boolean, text, pgEnum } from "drizzle-orm/pg-core";
+import { serial, varchar, timestamp, pgTable, boolean, text, pgEnum, integer } from "drizzle-orm/pg-core";
 
 export const roleEnum = pgEnum("role", ["jefe", "encargado", "programador"])
 
-export const userArea = pgTable("userArea", {
-    id: serial("id").primaryKey(),
-    name: varchar("name"),
-    surname: varchar("surname"),
-    email: varchar("email"),
-    role: roleEnum("role"),
-    location: varchar("location"),
-    pfp: varchar("pfp")
-});
-
 export const employee = pgTable('employees', {
-    id: text("id").unique().primaryKey(),
+    id: serial('id').notNull().unique(),
     name: varchar('name').notNull(),
     surname: varchar('surname').notNull(),
     username: varchar('username').notNull().unique(),
@@ -32,7 +22,7 @@ export const event = pgTable('events', {
     description: varchar('description'),
     dueDate: timestamp('dueDate').notNull(),
     participants: varchar('participants').array(),
-    department: varchar('department')
+    department: varchar('department').references(() => employee.department)
 })
 
 export const note = pgTable('notes', {
@@ -53,8 +43,8 @@ export const file = pgTable('files', {
 
 export const chat = pgTable('chats', {
     id: serial('id').notNull().unique(),
-    senderID: varchar('senderID').notNull().references(() => employee.id),
-    receiverID: varchar('receiverID').notNull().references(() => employee.id),
+    senderID: integer('senderID').notNull().references(() => employee.id),
+    receiverID: integer('receiverID').notNull().references(() => employee.id),
     message: text('message').notNull(),
     timestamp: timestamp("timestamp", {
         withTimezone: true,
@@ -79,28 +69,3 @@ export const sessionTable = pgTable("session", {
         mode: "date"
     }).notNull()
 })
-
-/* export const tasks = pgTable('tasks', {
-    taskID: serial('taskID').primaryKey(),
-    userID: varchar('userID').notNull(),
-    description: varchar('description').notNull(),
-    checked: boolean('checked').default(false)
-})
-
-export const userTable = pgTable("user", {
-    id: text("id").primaryKey(),
-    name: varchar("name").notNull(),
-    username: varchar("username").notNull().unique(),
-    hashed_password: text('hashed_password').notNull()
-});
-
-export const sessionTable = pgTable("session", {
-    id: text("id").primaryKey(),
-    userId: text("user_id")
-        .notNull()
-        .references(() => userTable.id),
-    expiresAt: timestamp("expires_at", {
-        withTimezone: true,
-        mode: "date"
-    }).notNull()
-}); */

@@ -4,7 +4,7 @@ import { Argon2id } from "oslo/password";
 import { db } from "$lib";
 
 import type { Actions } from "./$types";
-import { userTable } from "$lib/schema";
+import { employee } from "$lib/schema";
 import { eq } from "drizzle-orm";
 
 import { superValidate } from 'sveltekit-superforms';
@@ -39,7 +39,7 @@ export const actions: Actions = {
 			const username = (form.data.username as string) || '';
 			const password = (form.data.password as string) || '';
 
-			const existingUser = await db.select().from(userTable).where(eq(userTable.username, username.toLowerCase()))
+			const existingUser = await db.select().from(employee).where(eq(employee.username, username.toLowerCase()))
 
 			if (!existingUser) {
 				return fail(400, {
@@ -47,13 +47,12 @@ export const actions: Actions = {
 				});
 			}
 
-			const validPassword = await new Argon2id().verify(existingUser[0].hashed_password, password);
+			const validPassword = await new Argon2id().verify(existingUser[0].password, password);
 			if (!validPassword) {
 				return fail(400, {
 					message: "Incorrect username or password"
 				});
 			}
-
 			const session = await auth.createSession(existingUser[0].id, {});
 			const sessionCookie = auth.createSessionCookie(session.id);
 
@@ -68,6 +67,7 @@ export const actions: Actions = {
 				secure: false,
 				path: '/'
 			})
+
 
 			return redirect(302, "/");
 		}

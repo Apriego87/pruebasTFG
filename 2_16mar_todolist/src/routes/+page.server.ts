@@ -1,7 +1,7 @@
 /** @type {import('./$types').PageData} */
 
 import { db } from '$lib'
-import { tasks } from '$lib/schema.js'
+import { task } from '$lib/schema.js'
 import { and, eq } from 'drizzle-orm';
 
 import type { PageServerLoad, Actions } from './$types'
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ cookies }) => {
 
     try {
         const userID = cookies.get('userid') || ''
-        const allTasks = await db.select().from(tasks).where(eq(tasks.userID, userID))
+        const allTasks = await db.select().from(task).where(eq(task.creatorID, userID))
 
         return {
             allTasks, logged
@@ -38,7 +38,7 @@ export const actions: Actions = {
         const data = await request.formData()
 
         // const task = JSON.stringify(data.get('task'))
-        const task = String(data.get('task'))
+        const newTask = String(data.get('task'))
 
         const userID = cookies.get('userid');
 
@@ -48,9 +48,9 @@ export const actions: Actions = {
             });
         }
 
-        await db.insert(tasks).values({
-            userID: userID,
-            description: task
+        await db.insert(task).values({
+            creatorID: userID,
+            description: newTask
         })
 
         return { success: true }
@@ -60,7 +60,7 @@ export const actions: Actions = {
 
         console.log(data)
 
-        const task = data
+        const newTask = data
 
         const userID = cookies.get('userid');
         if (!userID) {
@@ -69,18 +69,18 @@ export const actions: Actions = {
             });
         }
 
-        await db.update(tasks).set({
-            checked: !task.checked
+        await db.update(task).set({
+            checked: !newTask.checked
         }).where(
             and(
-                eq(tasks.userID, userID),
-                eq(tasks.description, task.description)
+                eq(task.creatorID, userID),
+                eq(task.description, newTask.description)
             )
         )
     },
     deleteChecked: async ({ cookies }) => {
         const userID = cookies.get('userid') || ''
-        await db.delete(tasks).where(and(eq(tasks.checked, true), eq(tasks.userID, userID)))
+        await db.delete(task).where(and(eq(task.checked, true), eq(task.creatorID, userID)))
     },
     signout: async (event) => {
         if (!event.locals.session) {

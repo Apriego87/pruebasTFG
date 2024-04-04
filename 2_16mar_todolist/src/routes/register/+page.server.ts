@@ -4,7 +4,7 @@ import { Argon2id } from "oslo/password";
 import { db } from "$lib";
 
 import type { Actions } from "./$types";
-import { userTable } from "$lib/schema";
+import { employee } from "$lib/schema";
 
 import { setError, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
@@ -49,7 +49,7 @@ export const actions: Actions = {
 
             '><'
 
-            if (((await db.select().from(userTable).where(eq(userTable.username, username))).toString() != '')) {
+            if (((await db.select().from(employee).where(eq(employee.username, username))).toString() != '')) {
                 return setError(form, 'username', 'Este usuario ya existe' );
             }
 
@@ -57,11 +57,17 @@ export const actions: Actions = {
                 const userId = generateId(15);
                 const hashedPassword = await new Argon2id().hash(password);
 
-                await db.insert(userTable).values({
+                await db.insert(employee).values({
                     id: userId,
                     name: name,
+                    surname: 'apellido',
                     username: username,
-                    hashed_password: hashedPassword
+                    password: hashedPassword,
+                    email: 'email@gmail.com',
+                    role: 'jefe',
+                    department: 'departamento',
+                    location: 'ubicación',
+                    pfp: 'https://i.etsystatic.com/34732889/r/il/b08942/3768265623/il_570xN.3768265623_sji1.jpg'
                 })
 
                 return redirect(302, "/");

@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1710847163385,
-      "tag": "0000_real_vance_astro",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1710866019796,
-      "tag": "0001_colorful_leader",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1711015080196,
-      "tag": "0002_many_naoko",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1711020692654,
-      "tag": "0003_nappy_silverclaw",
+      "when": 1712262864001,
+      "tag": "0000_cheerful_odin",
       "breakpoints": true
     }
   ]
