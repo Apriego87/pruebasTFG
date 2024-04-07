@@ -15,22 +15,6 @@
 		}
 	})
 </script>
-<!-- 
-
-<SuperDebug data={$form} />
-
-
-{#if $allErrors.length}
-	<ul>
-		{#each $allErrors as error}
-			<li>
-				<b>{error.path}:</b>
-				{error.messages.join('. ')}
-			</li>
-		{/each}
-	</ul>
-{/if}
- -->
 
 <main class="flex items-center justify-center">
 	<div class="w-1/2">
