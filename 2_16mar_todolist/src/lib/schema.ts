@@ -13,7 +13,7 @@ export const userArea = pgTable("userArea", {
 });
 
 export const employee = pgTable('employees', {
-    id: text("id").unique().primaryKey(),
+    id: text("id").primaryKey(),
     name: varchar('name').notNull(),
     surname: varchar('surname').notNull(),
     username: varchar('username').notNull().unique(),
@@ -26,8 +26,8 @@ export const employee = pgTable('employees', {
 })
 
 export const event = pgTable('events', {
-    id: serial('id').notNull().unique(),
-    creatorID: varchar('creatorID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
+    id: serial('id').primaryKey(),
+    creatorID: varchar('creatorID').notNull().references(() => employee.id),
     title: varchar('title').notNull(),
     description: varchar('description'),
     dueDate: timestamp('dueDate').notNull(),
@@ -36,25 +36,25 @@ export const event = pgTable('events', {
 })
 
 export const note = pgTable('notes', {
-    id: serial('id').notNull().unique(),
-    creatorID: varchar('creatorID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
+    id: serial('id').primaryKey(),
+    creatorID: text('creatorID').notNull().references(() => employee.id),
     title: varchar('title').notNull(),
     description: varchar('description'),
     category: varchar('category')
 })
 
 export const file = pgTable('files', {
-    id: serial('id').notNull().unique(),
-    creatorID: varchar('creatorID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
+    id: serial('id').primaryKey(),
+    creatorID: varchar('creatorID').notNull().references(() => employee.id),
     name: varchar('name').notNull(),
     mime: varchar('mime').notNull(),
     url: varchar('url').notNull()
 })
 
 export const chat = pgTable('chats', {
-    id: serial('id').notNull().unique(),
-    senderID: varchar('senderID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
-    receiverID: varchar('receiverID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
+    id: serial('id').primaryKey(),
+    senderID: varchar('senderID').notNull().references(() => employee.id),
+    receiverID: varchar('receiverID').notNull().references(() => employee.id),
     message: text('message').notNull(),
     timestamp: timestamp("timestamp", {
         withTimezone: true,
@@ -63,33 +63,22 @@ export const chat = pgTable('chats', {
 })
 
 export const task = pgTable('tasks', {
-    id: serial('id').notNull().unique(),
-    creatorID: varchar('creatorID').notNull().references(() => employee.id, {onDelete: 'cascade'}),
+    id: serial('id').primaryKey(),
+    creatorID: varchar('creatorID').notNull().references(() => employee.id),
     description: varchar('description').notNull(),
     checked: boolean('checked').notNull().default(false)
 })
 
-/* export const sessionTable = pgTable("session", {
+export const sessionTable = pgTable("session", {
     id: text("id").primaryKey(),
-    userId: text("user_id")
+    userId: text("userId")
         .notNull()
-        .references(() => employee.id, {onDelete: 'cascade'}),
-    expiresAt: timestamp("expires_at", {
+        .references(() => employee.id),
+    expiresAt: timestamp("expiresAt", {
         withTimezone: true,
         mode: "date"
     }).notNull()
-}) */
-
-export const sessionTable = pgTable("session", {
-	id: text("id").primaryKey(),
-	userId: text("user_id")
-		.notNull()
-		.references(() => employee.id, {onDelete: 'cascade'}),
-	expiresAt: timestamp("expires_at", {
-		withTimezone: true,
-		mode: "date"
-	}).notNull()
-});
+})
 
 /* export const tasks = pgTable('tasks', {
     taskID: serial('taskID').primaryKey(),

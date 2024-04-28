@@ -36,7 +36,7 @@ export const event = pgTable('events', {
 })
 
 export const note = pgTable('notes', {
-    id: serial('id').notNull().unique(),
+    // id: serial('id').notNull().unique(),
     creatorID: varchar('creatorID').notNull().references(() => employee.id),
     title: varchar('title').notNull(),
     description: varchar('description'),

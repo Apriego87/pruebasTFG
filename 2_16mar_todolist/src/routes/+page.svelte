@@ -4,22 +4,12 @@
 	import List from '../components/List.svelte'
 	import { enhance } from '$app/forms'
 	import { Button } from '$lib/components/ui/button'
-	
+	import type { PageData } from './$types'
 
 	export let data: PageData
 </script>
 
 <main>
-	<div class="absolute right-10 top-10 block">
-		{#if data.logged}
-			<form method="POST" action="?/signout" use:enhance>
-				<Button type="submit">Cerrar sesión</Button>
-			</form>
-		{:else}
-			<Button href="/login">Iniciar sesión</Button>
-			<Button href="/register">Registrarse</Button>
-		{/if}
-	</div>
 	<div class="w-1/2">
 		<Card.Root>
 			<Card.Header>

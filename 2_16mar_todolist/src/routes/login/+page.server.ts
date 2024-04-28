@@ -24,7 +24,7 @@ export const load = (async () => {
 	const form = await superValidate(zod(schema));
 
 	// Always return { form } in load functions
-	return { form };
+	return { form, title: 'Inicio de Sesión' };
 });
 
 export const actions: Actions = {
@@ -47,12 +47,14 @@ export const actions: Actions = {
 				});
 			}
 
+
 			const validPassword = await new Argon2id().verify(existingUser[0].password, password);
 			if (!validPassword) {
 				return fail(400, {
 					message: "Incorrect username or password"
 				});
 			}
+			console.log(existingUser[0].id)
 			const session = await auth.createSession(existingUser[0].id, {});
 			const sessionCookie = auth.createSessionCookie(session.id);
 

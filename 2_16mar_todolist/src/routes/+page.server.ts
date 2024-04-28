@@ -9,20 +9,20 @@ import { fail, redirect } from '@sveltejs/kit';
 import { auth } from '$lib/server/auth';
 
 export const load: PageServerLoad = async ({ cookies }) => {
-    let logged = false
+    /* let logged = false
     if (cookies.get('auth_session')) {
         logged = true
     }
     else {
         return redirect(302, '/login')
-    }
+    } */
 
     try {
         const userID = cookies.get('userid') || ''
         const allTasks = await db.select().from(task).where(eq(task.creatorID, userID))
 
         return {
-            allTasks, logged
+            allTasks, title: 'Lista de Tareas'
         };
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -100,6 +100,6 @@ export const actions: Actions = {
             secure: false
         });
 
-        return redirect(302, "/");
+        return redirect(302, "/login");
     }
 }

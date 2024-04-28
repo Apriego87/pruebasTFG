@@ -9,10 +9,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	console.log('HOLAAAAAAAAAAAAAAAAA')
-	console.log(sessionId)
-	console.log('EEEEEEEEEEEEEEEEEEEE')
-
 	const { session, user } = await auth.validateSession(sessionId);
 	if (session && session.fresh) {
 		const sessionCookie = auth.createSessionCookie(session.id);
